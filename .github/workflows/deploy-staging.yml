@@ -3,7 +3,9 @@ name: Deploy to staging
 on:
   pull_request:
     types: [labeled]
-
+permissions:
+  contents: read
+  packages: write
 env:
   IMAGE_REGISTRY_URL: ghcr.io
   ###############################################
@@ -52,7 +54,7 @@ jobs:
         with:
           registry: ${{ env.IMAGE_REGISTRY_URL }}
           username: Claudia-M-A
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -84,7 +86,7 @@ jobs:
         with:
           login-server: ${{env.IMAGE_REGISTRY_URL}}
           username: Claudia-M-A
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy web app container
         uses: azure/webapps-deploy@v3
