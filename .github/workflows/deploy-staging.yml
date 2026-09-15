@@ -11,7 +11,7 @@ env:
   ###############################################
   ### Replace <username> with GitHub username ###
   ###############################################
-  DOCKER_IMAGE_NAME: Claudia-M-A-azure-ttt
+  DOCKER_IMAGE_NAME: claudia-m-a-azure-ttt
   AZURE_WEBAPP_NAME: Claudia-M-A-ttt-app
   ###############################################
 
@@ -48,7 +48,12 @@ jobs:
         with:
           name: webpack artifacts
           path: public
-
+      - name: Check GHCR authentication
+        run: |
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Actor: $GITHUB_ACTOR"
+          echo "Token permissions should include packages:write"
+          docker info
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -60,12 +65,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{env.IMAGE_REGISTRY_URL}}/${{ github.repository }}/${{env.DOCKER_IMAGE_NAME}}
+          images: ghcr.io/${{ github.repository_owner }}/${{ env.DOCKER_IMAGE_NAME }}
           tags: |
             type=sha,format=long,prefix=
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
